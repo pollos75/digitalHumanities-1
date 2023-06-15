@@ -1,0 +1,27 @@
+# Nous avons besoin de ces bibliothèques pour notre nuage de mots
+library(tidytext)
+library(wordcloud)
+library(dplyr)
+library(tibble)
+
+# Charger les données
+texte <- readLines("C:/live.txt")
+
+# Convertir le texte 
+donnees_tidy <- texte %>%
+  enframe(name = "ligne", value = "texte") %>%
+  unnest_tokens(word, texte)
+
+# Supprimer les mots vides
+donnees_tidy <- donnees_tidy %>%
+  anti_join(stop_words)
+
+# Créer un tableau avec le nombre d'apparence des mots
+frequence_mots <- donnees_tidy %>%
+  count(word, sort = TRUE)
+
+# Créer le nuage de mots
+wordcloud(words = frequence_mots$word, freq = frequence_mots$n, min.freq = 1,
+          max.words=200, random.order=FALSE, rot.per=0.35,
+          colors=brewer.pal(8, "Dark2"))
+    
